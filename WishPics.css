@@ -1,0 +1,74 @@
+.WishPicDetails {
+ font-family: sans-serif;
+ padding-left: 10px;
+ margin-left: 10px;
+}
+
+#WishPicsTitle {
+ font-weight: bolder;
+ font-size: 120%;
+ background-color: #eeeeff;
+ padding-left: 10px;
+ margin:3px
+}
+
+#WishPicsDescription  { 
+ background-color: #f5f5ff;
+ height: 64px;
+ margin: 3px;
+ border-bottom: 1px solid #777;
+}
+
+
+#WishPicsComment {
+ background-color: #f5f5ff;
+ height: 22px;
+ margin: 3px;
+ border-bottom: 1px solid #777;
+}
+
+#WishPicsLinkText {
+ background-color: #f5f5ff;
+ height: 22px;
+ margin: 3px;
+ border-bottom: 1px solid #777;
+}
+
+#WishPicsCommentInput {
+ background-color: #f5f5ff;
+ height: 19px;
+ width: 197px;
+ padding: 0px;
+ padding-top: 3px;
+ margin: 0px;
+ border: none;
+ border-bottom: 1px solid #777;
+}
+
+#WishPicsCommentInput:hover {
+ background-color: #ff5555;
+ height: 19px;
+ width: 197px;
+ padding: 0px 0px 0px 0px;
+ padding-top: 3px;
+ margin: 0px 0px 0px 0px;
+ border: none;
+ border-bottom: 1px solid #777;
+}
+
+#WishPicsImage {
+ padding: 0px 0px 0px 0px;
+ margin: 0px 0px 0px 0px;
+}
+
+.WishPicsButton {
+    border: 1px solid #006;
+    background: #ccf;
+    margin: 2px 4px 6px 0px;
+}
+
+.WishPicsButton:hover {
+    border: 1px solid #f00;
+    background: #eef;
+    margin: 2px 4px 6px 0px;
+}
