@@ -81,7 +81,9 @@ if (!class_exists('WishPics_For_WordPress')) {
          $this->addFilters();
          $this->loadLists();
          $this->URLRoot = plugins_url("", __FILE__);
-      }
+         $this->base_name  = plugin_basename( __FILE__ );
+         $this->plugin_dir = dirname( $this->base_name );
+     }
 
       function loadLists() {
         $files = glob(dirname(__FILE__) . "/lists/*.php");

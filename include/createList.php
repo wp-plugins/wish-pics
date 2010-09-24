@@ -128,7 +128,7 @@
    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
    // Display Search Options
-   if (($listAction != "Create") && check_admin_referer( 'update-WishPics-options')) {
+   if (($listAction != __('Create','wish-pics')) && check_admin_referer( 'update-WishPics-options')) {
 
 ?>
   <table class="form-table">
@@ -244,7 +244,7 @@
       $pxml = amazon_query($request);
 
       if (($pxml === False) || !isset($pxml['Items']['Item'])) {
-         echo "<PRE>Search returned no results.</PRE>";
+         _e('Search returned no results.', 'wish-pics');
          $Items = array();
       } else {
          $Items=$pxml['Items']['Item'];
@@ -351,7 +351,6 @@
 <?php
 
       if (is_array($AmazonItem)) {
-         $defKey=0;
          foreach ($AmazonItem as $ASIN => $key) {
 
             $request = array("Operation"=>"ItemLookup","ItemId"=>$ASIN,"ResponseGroup"=>"Small,Images","IdType"=>"ASIN","MerchantId"=>"Amazon");
@@ -375,14 +374,11 @@
                $defImageL       = "http://images-eu.amazon.com/images/G/02/misc/no-img-lg-uk.gif";
 
             $defLink    = $result['DetailPageURL'];
-            $defDescription ="by " .$r_artist . " [" . $r_manufacturer . "]";
+            $defDescription =sprintf(__('by %1$s [%2$s]', 'wish-pics'),$r_artist, $r_manufacturer);
             // Make Short Form Name:
-            $words = str_word_count($defTitle, 2);
-            $words = array_slice( $words, 0, 3);
-            $defTag = implode('', $words).$defKey;
-            $defComment     ="$ASIN - $defTag";
+            $defComment     ="$ASIN";
 
-            $defLinkText= "Available from <a href=\'$defLink\'>Amazon</a>";
+            $defLinkText= __('Available from', 'wish-pics')." <a href=\'$defLink\'>Amazon</a>";
 
             $java = "\"document.getElementById('WishPicsComment').innerHTML ='".addslashes($defComment)."'; ";
             $java = $java ."document.getElementById('WishPicsDescription').innerHTML='".addslashes($defDescription)."'; ";
@@ -396,7 +392,6 @@
             $cover = $pre ."<img height='". $Options['thumbHeight'] ."' width='". $Options['thumbWidth'] ."' src='" . $defImage . "' alt='" . $defTitle . "'></div>\n";
             $cover = $cover. "</div></div>\n";
             echo $cover;
-            $defKey++;
          }
 
 ?>
