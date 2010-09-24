@@ -13,12 +13,12 @@
          $Opts = $this->getOptions();
          if ( isset($postId) ) {//&& $this->checkAccess($postId)) {
             $itemSettings = $this->getItems();
-            if ($postAction == "Remove") {
-               $itemSettings[$postId][$postItem]['Status'] = "1";
+            if ($postAction == __('Remove', 'wish-pics')) {
+               $itemSettings[$postId][$postItem]['Status'] = '1';
                $itemSettings[$postId][$postItem]['Comment'] = $postComment;
             }  
-            if ($postAction == "Add") {
-               $itemSettings[$postId][$postItem]['Status'] = "0";
+            if ($postAction == __('Add', 'wish-pics')) {
+               $itemSettings[$postId][$postItem]['Status'] = '0';
                $itemSettings[$postId][$postItem]['Comment'] = $postComment;
             }  
             update_option( $this->itemsOptionName, $itemSettings );

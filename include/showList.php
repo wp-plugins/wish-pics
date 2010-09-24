@@ -53,14 +53,14 @@
 
       if ($canUpdate) {
          $java = "\"document.getElementById('WishPicsItem').value='$key'; ";
-         $java = $java ."document.getElementById('WishPicsCommentInput').value ='$defComment'; ";
+         $java = $java ."document.getElementById('WishPicsCommentInput').value ='".addslashes($defComment)."'; ";
       } else {
-         $java = "\"document.getElementById('WishPicsComment').innerHTML ='$defComment'; ";
+         $java = "\"document.getElementById('WishPicsComment').innerHTML ='".addslashes($defComment)."'; ";
       }
-      $java = $java ."document.getElementById('WishPicsDescription').innerHTML='$defDescription'; ";
-      $java = $java ."document.getElementById('WishPicsTitle').innerHTML='$defTitle'; ";
+      $java = $java ."document.getElementById('WishPicsDescription').innerHTML='".addslashes($defDescription)."'; ";
+      $java = $java ."document.getElementById('WishPicsTitle').innerHTML='".addslashes($defTitle)."'; ";
       $java = $java ."document.getElementById('WishPicsLink').href='$defLink'; ";
-      $java = $java ."document.getElementById('WishPicsLinkText').innerHTML='$defLinkText'; ";
+      $java = $java ."document.getElementById('WishPicsLinkText').innerHTML='".addslashes($defLinkText)."'; ";
       $java = $java ."document['WishPicsImage'].src='$defImageL'; ";
  
       $java = $java . "\"";
@@ -70,7 +70,7 @@
       } else {
          $pre = "<div onclick=". $java . " style='float:left' id='WishPicsItem" . $key ."'><div style='position:relative; display:block;'><div>";
       }
-      $cover = $pre ."<img height='" . $Opts['thumbHeight'] . "' width='" . $Opts['thumbWidth'] . "'src='" . $defImage . "' alt='" . $defTitle . "'></div>\n";
+      $cover = $pre ."<img height='" . $Opts['thumbHeight'] . "' width='" . $Opts['thumbWidth'] . "'src='" . $defImage . "' alt='" . addslashes($defTitle) . "'></div>\n";
       if ($itemSettings[$key]['Status'] == "1") {
          $cover = $cover. "<div style='position:absolute;left:4px;top:4px; z-index:2'><img width='$tickWidth' height='$tickHeight' src='$tickURL'></div>\n";
       }
@@ -79,7 +79,7 @@
    }
    $output = $output . "</div>\n";
    $details = '<p><div style="width:400px; display: table"><div style="float:left"><a id="WishPicsLink" href="'.$defLink.'" ><img id="WishPicsImage" NAME="WishPicsImage" width="200px" src="'.$defImageL.'"></a></div>'."\n";
-   $details = $details. '<div class="WishPicsDetails"><div id="WishPicsTitle">'.$defTitle.'</div><div id="WishPicsDescription">'.$defDescription.'&nbsp;</div>';
+   $details = $details. '<div class="WishPicsDetails"><div id="WishPicsTitle">'.addslashes($defTitle).'</div><div id="WishPicsDescription">'.addslashes($defDescription).'&nbsp;</div>';
    $details = $details. '<div id="WishPicsLinkText">'.$defLinkTextN.'</div>';
    if (!$canUpdate) {
       $details = $details .'<div class="WishPicsComment" id = "WishPicsComment">'. $defComment . '</div>';
@@ -87,9 +87,9 @@
       $form = "<form name='form3' method='post' action='". str_replace( '%7E', '~', $_SERVER['REQUEST_URI']) . "'>";
       $nonce= wp_create_nonce  ('update-WishPics-items');
       $form = $form. "<input type='hidden' name='_wpnonce' value='$nonce'>";
-      $form = $form. "<input class='WishPicsInput' id='WishPicsCommentInput' name='WishPicsComment' type='text' value='". $defComment ."' />";
-      $form = $form. "<input class='WishPicsButton' type='submit' name='WishPicsAction' value='Remove' />";
-      $form = $form. "<input class='WishPicsButton' type='submit' name='WishPicsAction' value='Add' />";
+      $form = $form. "<input class='WishPicsInput' id='WishPicsCommentInput' name='WishPicsComment' type='text' value='". addslashes($defComment) ."' />";
+      $form = $form. "<input class='WishPicsButton' type='submit' name='WishPicsAction' value='". __('Remove', 'wish-pics'). "' />";
+      $form = $form. "<input class='WishPicsButton' type='submit' name='WishPicsAction' value='". __('Add', 'wish-pics'). "' />";
       $form = $form. "<input name='WishPicsId' type='hidden' value='$Id' />";
       $form = $form. "<input id = 'WishPicsItem' name='WishPicsItem' type='hidden' value='$defKey' size='20' />";
       $form = $form. "</form>\n";

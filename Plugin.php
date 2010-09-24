@@ -1,10 +1,11 @@
 <?php
 /*
-Plugin Name: Picture Wishlist
-Plugin URI: http://www.houseindorset.co.uk/plugins/Wish-Pics
+Plugin Name: Wish Pics
+Plugin URI: http://www.houseindorset.co.uk/plugins/wish-pics
 Description: Provides a graphical wishlist displaying a grid of front covers, indicating which books/CDs you have in your collection.
 Author: Paul Stuttard
-Version: 0.1
+Version: 1.1
+Text Domain: wish-pics
 Author URI: http://www.houseindorset.co.uk/
 License: GPL2
 
@@ -51,15 +52,6 @@ if (!class_exists('WishPics_For_WordPress')) {
 /*****************************************************************************************/
       /// Settings:
 /*****************************************************************************************/
-      var $optionList = array(
-         'name' => array( 'Name' => "Name", 'Description' => "Name of your Wishlist", 'Default' => 'Wishlist', 'Type' => 'text'),
-         'list' => array( 'Name' => "Wishlist", 'Description' => "Which wishpics list to display", 'Default' => 'MrMen', 'Type' => 'wishlist'),
-         'thumbWidth' => array( 'Name' => "Thumbnail Width", 'Description' => "Thumbnail Width", 'Default' => '60px', 'Type' => 'text'),
-         'thumbHeight' => array('Name' => "Thumbnail Height", 'Description' => "Thumbnail Height", 'Default' => '60px', 'Type' => 'text'),
-         'arrayWidth' => array('Name' => "Array Width", 'Description' => "The total width of the Wishlist array", 'Default' => '', 'Type' => 'text'),
-         'public' => array('Name' => "Public Access", 'Description' => "Allow anonymous users ability to update the Wishlist.", 'Default' => "1", 'Type' => "checkbox"),
-         'accessLevel' => array('Name' => "Access Level", 'Description' => "Set the User Access Level to enable update of the Wishlist", 'Default' => "administrator", 'Type' => "selection", 
-                                'Options' => array('Subscriber', 'Contributor','Author','Editor','Administrator')));
 			
       // String to insert into Posts to indicate where to insert the Wishlist image map
       var $TagHead          = '<!--wishpics';
@@ -72,7 +64,7 @@ if (!class_exists('WishPics_For_WordPress')) {
       // Settings
       var $Id = 0;
       var $Settings = array();      // Holds local modified settings (will always be at least defaults)
-
+      var $optionList = array();    // Will hold the plugin options
       var $Opts     = null;         // Holds a copy of the settings for all WishLists
       var $Titles   = array();      // Holds details of all WishPics Lists
 
@@ -105,18 +97,42 @@ if (!class_exists('WishPics_For_WordPress')) {
       function addActions() {
          add_action('admin_menu', array($this, 'optionsMenu'));
          add_action('init', array($this, 'handlePost'));
+         add_action('init', array($this, 'loadLang'));
       }
 
       function addFilters() {
+         add_filter('plugin_row_meta', array($this, 'registerPluginLinks'),10,2);
          add_filter('the_posts', array($this, 'stylesNeeded'));
          add_filter('the_content', array($this,'contentFilter'));
+       }
+
+      function registerPluginLinks($links, $file) {
+         if ($file == $this->base_name) {
+            $links[] = '<a href="options-general.php?page=' . $this->base_name .'">' . __('Settings','wish-pics') . '</a>';
+         }
+         return $links;
       }
 
       function optionsMenu() {
-         //                             v- Page Title,    v-Menu Name v- capability, slug, v- function
-         $mypage = add_management_page('Manage WishPics', 'WishPics', 8, __FILE__, array($this,'showOptions'));
-         add_action( "admin_print_styles-$mypage", array($this,'HeaderContent') );
-         add_action( "admin_print_scripts-$mypage", array($this,'HeaderScripts') );
+         $my_page = add_options_page(__('Manage WishPics', 'wish-pics'), __('Wish Pics', 'wish-pics'), 'manage_options', __FILE__, array($this, 'showOptions'));
+         add_action( "admin_print_styles-$my_page", array($this,'HeaderContent') );
+         add_action( "admin_print_scripts-$my_page", array($this,'HeaderScripts') );
+      }
+
+      function loadLang() {
+         /* load localisation  */
+         load_plugin_textdomain('wish-pics', $this->plugin_dir . '/i18n', $this->plugin_dir . '/i18n');
+
+         /* Move Option List construction here so we can localise the strings */
+         $this->optionList = array(
+            'name' => array( 'Name' => __('Name', 'wish-pics'), 'Description' => __('Name of your Wishlist', 'wish-pics'), 'Default' => __('Wishlist', 'wish-pics'), 'Type' => 'text'),
+            'list' => array( 'Name' => __('Wishlist', 'wish-pics'), 'Description' => __('Which wishpics list to display', 'wish-pics'), 'Default' => 'MrMen', 'Type' => 'wishlist'),
+            'thumbWidth' => array( 'Name' => __('Thumbnail Width', 'wish-pics'), 'Description' => __('Thumbnail Width', 'wish-pics'), 'Default' => '60px', 'Type' => 'text'),
+            'thumbHeight' => array('Name' => __('Thumbnail Height', 'wish-pics'), 'Description' => __('Thumbnail Height', 'wish-pics'), 'Default' => '60px', 'Type' => 'text'),
+            'arrayWidth' => array('Name' => __('Array Width', 'wish-pics'), 'Description' => __('The total width of the Wishlist array', 'wish-pics'), 'Default' => '', 'Type' => 'text'),
+            'public' => array('Name' => __('Public Access', 'wish-pics'), 'Description' => __('Allow anonymous users ability to update the Wishlist.', 'wish-pics'), 'Default' => '1', 'Type' => 'checkbox'),
+            'accessLevel' => array('Name' => __('Access Level', 'wish-pics'), 'Description' => __('Set the User Access Level to enable update of the Wishlist', 'wish-pics'), 'Default' => __('administrator', 'wish-pics'), 'Type' => 'selection', 
+                                'Options' => array(__('Subscriber', 'wish-pics'), __('Contributor', 'wish-pics'), __('Author', 'wish-pics'), __('Editor', 'wish-pics'), __('Administrator', 'wish-pics') )));
       }
 
       /// Load styles only on Our Admin page or when Wishpics is displayed...
@@ -276,7 +292,7 @@ if (!class_exists('WishPics_For_WordPress')) {
          // Default do nothing.
          $action = isset($_POST[ 'WishPicsAction' ]) ? $_POST[ 'WishPicsAction' ] : 'No Action';
 
-         if ( ($action == "Create List" ) || ($action == "Edit List" ))
+         if ( ($action == __('Create List', 'wish-pics') ) || ($action == __('Edit List', 'wish-pics') ))
          {
             include('include/createList.php');
          } else {

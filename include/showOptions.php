@@ -20,6 +20,7 @@ On subsequent access on read must check isset.
  */
 
    $Opts = $this->getOptions();
+   unset($Opts['Temp']);
    $NewId = is_array($Opts) ? array_pop(array_keys($Opts)) + 1 : 0;
    $itemSettings = $this->getItems();
 
@@ -34,7 +35,7 @@ On subsequent access on read must check isset.
 /*****************************************************************************************/
 
    // User Input, grab settings.
-   if (($action == "Update Options" ) || ($action == "New" )) {
+   if (($action == __('Update Options', 'wish-pics') ) || ($action == __('New', 'wish-pics') )) {
        foreach ($this->optionList as $optName => $optDetails) {
          // Read their posted value
          $Opts[$Id][$optName] = stripslashes(isset($_POST[$optName]) ? $_POST[$optName] : null);
@@ -44,12 +45,12 @@ On subsequent access on read must check isset.
    // See if the user has posted us some information
    // If they did, the admin Nonce should be set.
    $NotifyUpdate = False;
-   if( ($action == "Update Options") && check_admin_referer( 'update-WishPics-options')) {
+   if( ($action == __('Update Options', 'wish-pics')) && check_admin_referer( 'update-WishPics-options')) {
 
       // Update Current Wishlist settings
       $this->saveOptions($Opts);
       $NotifyUpdate = True;
-   } elseif (($action == "New") && check_admin_referer( 'update-WishPics-options')) {
+   } elseif (($action == __('New', 'wish-pics')) && check_admin_referer( 'update-WishPics-options')) {
 
       // Create new list based on the previous one.
       foreach ($this->optionList as $optName => $optDetails) {
@@ -59,12 +60,12 @@ On subsequent access on read must check isset.
       $Id = $NewId;
 
       // Tweak the name.
-      $Opts[$Id]['name'] = "New " . $Opts[$Id]['name'];
+      $Opts[$Id]['name'] = __('New', 'wish-pics') . ' ' . $Opts[$Id]['name'];
 
       $this->saveOptions($Opts);
 
       $NotifyUpdate = True;
-   } elseif (($action == "Delete") && check_admin_referer( 'update-WishPics-options')) {
+   } elseif (($action == __('Delete', 'wish-pics')) && check_admin_referer( 'update-WishPics-options')) {
 
       // Delete the selected wishlist and drop back to the first.
 
@@ -73,7 +74,7 @@ On subsequent access on read must check isset.
       $this->saveOptions($Opts);
       update_option( 'WishPicsItems', $itemSettings );
       $Id=0;
-   } elseif (($action == "Delete List") && check_admin_referer( 'update-WishPics-options')) {
+   } elseif (($action == __('Delete List', 'wish-pics')) && check_admin_referer( 'update-WishPics-options')) {
  
       // Delete the Wish list template
       $this->deleteTitle($_POST['list']);
@@ -103,8 +104,8 @@ On subsequent access on read must check isset.
    foreach ($this->Titles[$Opts[$Id]['list']] as $item => $itemDetails) {
       if ( !isset($itemSettings[$Id][$item])) {
          // Settings don't exist
-         $itemSettings[$Id][$item]['Status'] = "0"; // Available 
-         $itemSettings[$Id][$item]['Comment'] = ""; // No comment
+         $itemSettings[$Id][$item]['Status'] = '0'; // Available 
+         $itemSettings[$Id][$item]['Comment'] = ''; // No comment
          $Update=True;
       }
    }
@@ -121,7 +122,7 @@ On subsequent access on read must check isset.
 ?>
 
 <div class="updated">
- <p><strong><?php _e('Options saved.', 'mt_trans_domain' ); ?></strong></p>
+ <p><strong><?php _e('Options saved.', 'wish-pics' ); ?></strong></p>
 </div>
 
 <?php
@@ -136,7 +137,7 @@ On subsequent access on read must check isset.
 ?>
 
 <div class="wrap">
- <h2>Wish Pics Plugin Options</h2>
+ <h2><?php _e('Wish Pics Plugin Options', 'wish-pics')?></h2>
  <form name="form1" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
 
 <?php wp_nonce_field('update-WishPics-options'); ?>
@@ -158,9 +159,9 @@ On subsequent access on read must check isset.
 ?>
        </select>
       </div>
-      <input class="button-secondary" type="submit" name="WishPicsAction" value="Select" />
-      <input class="button-secondary" type="submit" name="WishPicsAction" value="Delete" />
-      <input class="button-secondary" type="submit" name="WishPicsAction" value="New" />
+      <input class="button-secondary" type="submit" name="WishPicsAction" value="<?php _e('Select', 'wish-pics')?>" />
+      <input class="button-secondary" type="submit" name="WishPicsAction" value="<?php _e('Delete', 'wish-pics')?>" />
+      <input class="button-secondary" type="submit" name="WishPicsAction" value="<?php _e('New', 'wish-pics')?>" />
      </div>
     </td>
    </tr>
@@ -171,7 +172,7 @@ On subsequent access on read must check isset.
 
    // Loop through the options table, display a row for each.
    foreach ($this->optionList as $optName => $optDetails) {
-   if ($optDetails['Type'] == "checkbox") {
+   if ($optDetails['Type'] == 'checkbox') {
 
    // Insert a Check Box Item
    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -188,7 +189,7 @@ On subsequent access on read must check isset.
   </tr>
 
 <?php
-      } else if ($optDetails['Type'] == "selection") {
+      } else if ($optDetails['Type'] == 'selection') {
 
    // Insert a Dropdown Box Item
    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,7 +211,7 @@ On subsequent access on read must check isset.
     </td>
   </tr>
 <?php
-      } else if ($optDetails['Type'] == "wishlist") {
+      } else if ($optDetails['Type'] == 'wishlist') {
 
    // Insert Wishlist Selector
    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,9 +235,9 @@ On subsequent access on read must check isset.
    
    if (class_exists('AmazonWishlist_For_WordPress')) {
 ?>
-      <input class="button-secondary" type="submit" name="WishPicsAction" value="Create List" />
-      <input class="button-secondary" type="submit" name="WishPicsAction" value="Edit List" />
-      <input class="button-secondary" type="submit" name="WishPicsAction" value="Delete List" />
+      <input class="button-secondary" type="submit" name="WishPicsAction" value="<?php _e('Create List', 'wish-pics')?>" />
+      <input class="button-secondary" type="submit" name="WishPicsAction" value="<?php _e('Edit List', 'wish-pics')?>" />
+      <input class="button-secondary" type="submit" name="WishPicsAction" value="<?php _e('Delete List', 'wish-pics')?>" />
 <?php
    }
 ?>
@@ -268,7 +269,7 @@ On subsequent access on read must check isset.
   </table>
 
   <p class="submit">
-   <input type="submit" class="button-primary" name="WishPicsAction" value="Update Options" />
+   <input type="submit" class="button-primary" name="WishPicsAction" value="<?php _e('Update Options', 'wish-pics')?>" />
   </p>
  </form>
 </div>

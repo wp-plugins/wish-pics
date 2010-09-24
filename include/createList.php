@@ -1,31 +1,32 @@
 <?php
 
    $optionList = array(
-         'Id' => array( 'Name' => "Id", 'Type' => 'hidden'),
-         'name' => array( 'Name' => "Name", 'Description' => "Name of your Wishlist", 'Default' => 'Wishlist', 'Type' => 'text'),
-         'index' => array( 'Name' => "Product Index", 'Description' => "Which Amazon Product Index to Search through", 'Default' => 'Books', 'Type' => 'selection', 
+         'Id' => array( 'Name' => __('Id', 'wish-pics'), 'Type' => 'hidden'),
+         'name' => array( 'Name' => __('Name', 'wish-pics'), 'Description' => __('Name of your Wishlist', 'wish-pics'), 'Default' => __('Wishlist', 'wish-pics'), 'Type' => 'text'),
+         'index' => array( 'Name' => __('Product Index', 'wish-pics'), 'Description' => __('Which Amazon Product Index to Search through', 'wish-pics'), 'Default' => 'Books', 'Type' => 'selection', 
                            'Options' => array ( 'Apparel', 'Baby','Beauty','Blended','Books','Classical','DigitalMusic','DVD','Electronics','ForeignBooks','GourmetFood','HealthPersonalCare','HomeGarden',
                                                'Jewelry','Kitchen','Magazines','Merchants','Miscellaneous','Music','MusicalInstruments','MusicTracks','OfficeProducts','OutdoorLiving','PCHardware',
                                                'Photo','Restaurants','Software','SoftwareVideoGames','SportingGoods','Tools','Toys','VHS','Video','VideoGames','Wireless','WirelessAccessories') ),
-         'author' => array('Name' => "Author", 'Description' => "Author or Artist to search for", 'Type' => 'text', 'Default' => ''),
-         'title' => array('Name' => "Title", 'Description' => "Items Title to search for", 'Type' => 'text', 'Default' => ''),
-         'page' => array('Name' => "Page", 'Description' => "Page of Search Results", 'Default' => "1", 'Type' => 'text'),
-         'items' => array('Name' => "Items", 'Description' => "Number of Items so Far Selected", 'Type' => 'text', 'Default' => '0'));
+         'author' => array('Name' => __('Author', 'wish-pics'), 'Description' => __('Author or Artist to search for', 'wish-pics'), 'Type' => 'text', 'Default' => ''),
+         'title' => array('Name' => __('Title', 'wish-pics'), 'Description' => __('Items Title to search for', 'wish-pics'), 'Type' => 'text', 'Default' => ''),
+         'page' => array('Name' => __('Page', 'wish-pics'), 'Description' => __('Page of Search Results', 'wish-pics'), 'Default' => '1', 'Type' => 'text'),
+         'items' => array('Name' => __('Items', 'wish-pics'), 'Description' => __('Number of Items so Far Selected', 'wish-pics'), 'Type' => 'text', 'Default' => '0'));
 
    $listAction = isset($_POST['CreateListAction']) ? $_POST['CreateListAction'] :'No Action';
 
-   if (($listAction == "No Action") && check_admin_referer( 'update-WishPics-options')) {
+   if (($listAction == 'No Action') && check_admin_referer( 'update-WishPics-options')) {
       
       $Opts['Id'] = $_POST['WishPicsId'];
-      $Opts['name'] = stripslashes($_POST['list']);
       // First Entry into Page, clear options
-      if ($action == "Edit List") {
-
+      if ($action == __('Edit List', 'wish-pics')) {
+         $Opts['name'] = stripslashes($_POST['list']);
          // Retrieve the list content
          foreach ($this->Titles[$Opts['name']] as $defTag => $Details) {
             $AmazonItem[$Details['id']] = '1';
          }
          $Opts['items'] = count($AmazonItem);
+      } else {
+         $Opts['name'] = __('New', 'wish-pics') . stripslashes($_POST['list']);
       }
 
    } else {
@@ -39,20 +40,20 @@
             $Opts[$optName] = stripslashes($_POST[$optName]);
          }
       }
-      if ($listAction  == "Search") {
+      if ($listAction  == __('Search', 'wish-pics')) {
          $Opts['page'] = 1;
       }
-      if ($listAction  == "Next") {
+      if ($listAction  == __('Next', 'wish-pics')) {
          $Opts['page'] += 1;
       }
-      if (($listAction == "Previous") && ($Opts['page'] > 1)) {
+      if (($listAction == __('Previous', 'wish-pics')) && ($Opts['page'] > 1)) {
          $Opts['page'] -= 1;
 
       }
       $AmazonItem=$_POST['AmazonItem'];
       $Opts['items'] = count($AmazonItem);
 
-      if (($listAction  == "Save")) {
+      if ($listAction  == __('Save', 'wish-pics') ) {
          $Titles = array();
          $defKey=0;
          foreach ($AmazonItem as $ASIN => $key) {
@@ -86,12 +87,9 @@
 
             $defDescription ="by " .$r_artist . " [" . $r_manufacturer . "]";
 
-            // Make Short Form Name:
-            $words = str_word_count($defTitle, 2);
-            $words = array_slice( $words, 0, 3);
-            $defTag = implode('', $words).$defKey;
+            // Make Short Form Name: Use ASIN so does not change if list edited
 
-            $Titles[$Opts['name']][$defTag] = array( 'title' => $defTitle, 'type' => 'Amazon', 'id' => $ASIN,
+            $Titles[$Opts['name']][$ASIN] = array( 'title' => $defTitle, 'type' => 'Amazon', 'id' => $ASIN,
                                                      'image' => $defImageL, 'thumb' => $defImage, 'description' => $defDescription);
             $defKey++;
          }
@@ -110,9 +108,17 @@
       }
    }
 
+/*
+ Modularise this form:
+ Title
+ Nonce
+ add action Type Buttons array(class, name, value)
+ Close (True if put </form> on end)
+*/
+
 ?>
 <div class="wrap">
- <h2>Wish Pics List Creation Tool</h2>
+ <h2><?php _e('Wish Pics List Creation Tool', 'wish-pics');?></h2>
  <form name="form1" method="post" action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>">
 
 <?php wp_nonce_field('update-WishPics-options'); ?>
@@ -128,8 +134,8 @@
   <table class="form-table">
    <tr valign="top">
     <td>
-      <input type="hidden" name="WishPicsAction" value="Create List" />
-      <input class="button-secondary" type="submit" name="WishPicsAction" value="Back to Settings" />
+      <input type="hidden" name="WishPicsAction" value="<?php _e('Create List', 'wish-pics')?>" />
+      <input class="button-secondary" type="submit" name="WishPicsAction" value="<?php _e('Back to Settings', 'wish-pics')?>" />
     </td>
    <tr>
 
@@ -202,7 +208,7 @@
    <tr valign="top">
     <th scope="row">
    <p class="submit">
-    <input type="submit" class="button-primary" name="CreateListAction" value="Search" />
+    <input type="submit" class="button-primary" name="CreateListAction" value="<?php _e('Search', 'wish-pics')?>" />
    </p>
   </td></tr>
  </table>
@@ -285,9 +291,9 @@
    <input id="AmazonItem" name="AmazonItem[<?php echo $ASIN; ?>]" type="checkbox" value="1" <?php checked(isset($AmazonItem[$ASIN])); ?>/>
    <a href='<?php echo $r_url ."'>" . $r_title; ?></a>
   </p>
-  <p style='margin:0; line-height: 1em;'>by <?php echo $r_artist . " [" . $r_manufacturer; ?>]</p>
-  <p style='margin:0; margin-top:4.5em; line-height: 1em;'>Rank/Rating: <?php echo $r_rank ."/". $r_rating; ?></p>
-  <p style='margin:0; line-height: 1em;'><b>Price <span style='color:red;'><?php echo $r_price; ?></span></b></p>
+  <p style='margin:0; line-height: 1em;'><?php printf(__('by %1$s [%2$s]', 'wish-pics'),$r_artist,$r_manufacturer); ?>]</p>
+  <p style='margin:0; margin-top:4.5em; line-height: 1em;'><?php printf(__('Rank/Rating: %1$s/%2$s', 'wish-pics'),$r_rank, $r_rating); ?></p>
+  <p style='margin:0; line-height: 1em;'><b><?php _e('Price', 'wish-pics');?>: <span style='color:red;'><?php echo $r_price; ?></span></b></p>
  </div>
 </div>
 <?php
@@ -308,9 +314,9 @@
       }
 ?>
    <p class="submit">
-    <input type="submit" class="button-primary" name="CreateListAction" value="Previous" />
-    <input type="submit" class="button-primary" name="CreateListAction" value="Next" />
-    <input type="submit" class="button-primary" name="CreateListAction" value="Create" />
+    <input type="submit" class="button-secondary" name="CreateListAction" value="<?php _e('Previous', 'wish-pics')?>" />
+    <input type="submit" class="button-secondary" name="CreateListAction" value="<?php _e('Next', 'wish-pics')?>" />
+    <input type="submit" class="button-primary" name="CreateListAction" value="<?php _e('Create', 'wish-pics')?>" />
    </p>
 
 <?php
@@ -326,9 +332,9 @@
     <tr valign="top">
      <td colspan="2">
       <p class="submit">
-       <input type="hidden" name="WishPicsAction" value="Create List" />
-       <input class="button-secondary" type="submit" name="CreateListAction" value="Back to Search Results" />
-       <input type="submit" class="button-primary" name="CreateListAction" value="Save" />
+       <input type="hidden" name="WishPicsAction" value="<?php _e('Create List', 'wish-pics')?>" />
+       <input class="button-secondary" type="submit" name="CreateListAction" value="<?php _e('Back to Search Results', 'wish-pics')?>" />
+       <input type="submit" class="button-primary" name="CreateListAction" value="<?php _e('Save', 'wish-pics')?>" />
       </p>
      </td>
     <tr>

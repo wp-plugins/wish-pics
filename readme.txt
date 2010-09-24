@@ -1,9 +1,9 @@
 === Wish Pics ===
 Contributors: paulstuttard
 Donate link: http://www.houseindorset.co.uk/plugins/
-Tags: Amazon, wishlist, covers
+Tags: Amazon, wishlist, covers, shortcode
 Requires at least: 2.9
-Tested up to: 2.9
+Tested up to: 3.0.1
 Stable tag: 1.0
 
 Displays a wish list in the form of a grid of wanted items (for example CD, DVD or book covers). 
@@ -60,4 +60,6 @@ Occasionally the Amazon Web Services server fails to return a valid result. It s
 = 1.0 =
 First Release
 
-== Arbitrary section ==
+= 1.1 =
+Add Internationalisation support.
+General tidy up, make plugin name consistent. Move options page into 'Options' section
