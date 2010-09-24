@@ -4,7 +4,7 @@ Donate link: http://www.houseindorset.co.uk/plugins/
 Tags: Amazon, wishlist, covers, shortcode
 Requires at least: 2.9
 Tested up to: 3.0.1
-Stable tag: 1.0
+Stable tag: 1.1
 
 Displays a wish list in the form of a grid of wanted items (for example CD, DVD or book covers). 
 
@@ -63,3 +63,11 @@ First Release
 = 1.1 =
 Add Internationalisation support.
 General tidy up, make plugin name consistent. Move options page into 'Options' section
+
+== Upgrade Notice ==
+
+= 1.1 =
+Upgrade if you wish to have internationalisation (i18n) support.
+
+== Translations ==
+If you want to help to translate the plugin to your language, please have a look at the i18n/amazon-link.pot file which contains all definitions and may be used to create a language specific .po file, if you do then contact me and I will add it to the plugin ready for the next update.
